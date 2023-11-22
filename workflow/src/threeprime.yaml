@@ -1,0 +1,17 @@
+name: "test"
+  #Rscript_binary: "~/conda/envs/islet_decontamination/bin/Rscript"
+  #python_binary: "~/conda/envs/islet_decontamination/bin/python"
+Rscript_binary: "Rscript"
+python_binary: "python"
+
+input_dir_base:    "data/{sample}/outs/" 
+input_path_format: "data/{{sample}}/outs/raw_feature_bc_matrix/{data_file}"
+
+max_contamination: 0.1
+
+samples:
+  - samp1
+  - samp2
+  - samp3
+  - samp4
+

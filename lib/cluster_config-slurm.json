@@ -1,0 +1,38 @@
+{    
+
+	"__default__" {
+		"no_sub"    : 0,   
+		"group"     : "snakemake",
+		"memory"    : 10,
+		"name"      : "snkmk.{rule}.{wildcards}",
+		"output"    : "logs/cluster/{rule}/snkmk.{wildcards}.o",
+		"error"     : "logs/cluster/{rule}/snkmk.{wildcards}.e"
+    	},
+	"gzip_starsolo": {
+
+	},
+	"droplet_utils": {
+
+	},
+	"barcode_filtering": {
+
+	},
+	"prepare_rna_counts": {
+
+	},
+	"seurat_prelim": {
+
+	},
+	"decontx_prelim": {
+
+	},
+	"seurat_round2": {
+
+	},
+	"decontx_round2": {
+
+	},
+	"seurat_round3": {
+
+	},
+}

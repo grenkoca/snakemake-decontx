@@ -1,0 +1,40 @@
+__default__:
+  memory: "40"
+  ntasks: "1"
+  threads: "1"
+  name: "JOBNAME.{rule}.{wildcards}"
+  output: "logs/{rule}/smk.threeprime.{wildcards}.out"
+  error: "logs/{rule}/smk.threeprime.{wildcards}.err"
+  time: "4:00:00"
+
+
+cellranger:
+   memory: "50"
+   threads: "10"
+   time: "2-00:00:00"
+
+bam_autosomes_sorted:
+   threads: "10"
+   time: "3-00:00:00"
+
+starsolo:
+   threads: "10"
+   memory: "70"
+   time: "3-00:00:00"
+
+qc:
+   memory: "20"
+
+dropkick:
+   threads: "2"
+   memory: "50"
+
+dropkick_plots:
+   memory: "20"
+
+decontx_prelim:
+   memory: "50"
+
+decontx_round2:
+   memory: "50"
+
