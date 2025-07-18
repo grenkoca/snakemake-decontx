@@ -1,0 +1,45 @@
+name: "lung_decontamination"
+Rscript_binary: "Rscript"
+python_binary: "python"
+
+input_dir_base: "data/{sample}/outs/"
+input_path_format: "data/{{sample}}/outs/raw_feature_bc_matrix/{data_file}"
+
+# Decontamination parameters
+max_contamination: 0.12
+delta_first: 12
+delta_second: 32
+
+# Clustering parameters
+clustering:
+  resolution: 0.8
+  pca_dims: 20
+  min_pca_dim: 1
+  max_pca_dim: 20
+
+# QC metrics - lung tissue specific
+qc_metrics:
+  - name: "mt"
+    pattern: "^MT-"
+    description: "Mitochondrial genes"
+  - name: "ribo"
+    pattern: "^RP[SL]"
+    description: "Ribosomal genes"
+  - name: "AGER"
+    pattern: "^AGER$"
+    description: "Type I pneumocyte marker"
+  - name: "SFTPC"
+    pattern: "^SFTPC$"
+    description: "Type II pneumocyte marker"
+
+# Marker genes configuration file
+marker_genes_config: "config/marker_genes.yaml"
+
+# Tissue type
+tissue_type: "lung"
+
+samples:
+  - samp1
+  - samp2
+  - samp3
+  - samp4

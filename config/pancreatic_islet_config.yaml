@@ -1,0 +1,45 @@
+name: "pancreatic_islet_decontamination"
+Rscript_binary: "Rscript"
+python_binary: "python"
+
+input_dir_base: "data/{sample}/outs/"
+input_path_format: "data/{{sample}}/outs/raw_feature_bc_matrix/{data_file}"
+
+# Decontamination parameters
+max_contamination: 0.1
+delta_first: 10
+delta_second: 30
+
+# Clustering parameters
+clustering:
+  resolution: 0.8
+  pca_dims: 20
+  min_pca_dim: 1
+  max_pca_dim: 20
+
+# QC metrics - pancreatic islet specific
+qc_metrics:
+  - name: "mt"
+    pattern: "^MT-"
+    description: "Mitochondrial genes"
+  - name: "ribo"
+    pattern: "^RP[SL]"
+    description: "Ribosomal genes"
+  - name: "INS"
+    pattern: "^INS$"
+    description: "Insulin gene"
+  - name: "GCG"
+    pattern: "^GCG$"
+    description: "Glucagon gene"
+
+# Marker genes configuration file
+marker_genes_config: "config/marker_genes.yaml"
+
+# Tissue type
+tissue_type: "pancreatic_islet"
+
+samples:
+  - samp1
+  - samp2
+  - samp3
+  - samp4

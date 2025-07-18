@@ -8,6 +8,12 @@ import math
 import glob
 from pathlib import Path
 
+if '--configfile' in sys.argv:
+    i = sys.argv.index('--configfile')
+elif '--configfiles' in sys.argv:
+    i = sys.argv.index('--configfiles')
+conf_path = sys.argv[i+1]
+
 name = config["name"]
 _data = partial(os.path.join, "data")
 _results = partial(os.path.join, "results", name)
@@ -73,14 +79,16 @@ rule seurat_prelim:
         _results("seurat_prelim/{sample}/seurat_clusters.csv"),
     params:
         outdir = lambda wildcards:  _results(f"seurat_prelim/{wildcards.sample}"),
-        resolution = 0.8
+        resolution = config["clustering"]["resolution"],
+        conf_path = conf_path
     shell:
         "mkdir -p {params.outdir}; "
         """
-        {config[Rscript_binary]} workflow/scripts/run_seurat.R.bak \
+        {config[Rscript_binary]} workflow/scripts/run_seurat.R \
             --counts {input.counts} \
             --resolution {params.resolution} \
             --outdir {params.outdir} \
+            --config {params.conf_path}
         """
 
 
@@ -95,19 +103,21 @@ rule decontx_prelim:
         sample = lambda wildcards: wildcards.sample,
         outdir = lambda wildcards: _results(f"decontx_prelim/{wildcards.sample}"),
         max_contamination = config["max_contamination"],
-        delta_first = 10,
-        delta_second = 30
+        delta_first = config["delta_first"],
+        delta_second = config["delta_second"],
+        conf_path = conf_path
     shell:
         "mkdir -p {params.outdir}; "
         """
-        {config[Rscript_binary]} workflow/scripts/run_decontx.R \
+        {config[Rscript_binary]} workflow/scripts/run_decontx_configurable.R \
             --counts_nuclei {input.counts_nuclei} \
             --counts_empty {input.counts_empty} \
             --clusters {input.clusters} \
             --max_contamination {params.max_contamination} \
             --delta_first {params.delta_first} \
             --delta_second {params.delta_second} \
-            --outdir {params.outdir}
+            --outdir {params.outdir} \
+            --config {params.conf_path}
         """
 
 rule seurat_round2:
@@ -119,14 +129,16 @@ rule seurat_round2:
         _results("seurat_round2/{sample}/seurat_clusters.csv"),
     params:
         outdir = lambda wildcards: _results(f"seurat_round2/{wildcards.sample}"),
-        resolution = 0.8,
+        resolution = config["clustering"]["resolution"],
+        conf_path = conf_path
     shell:
         "mkdir -p {params.outdir}; "
         """
-        {config[Rscript_binary]} workflow/scripts/run_seurat.R.bak \
+        {config[Rscript_binary]} workflow/scripts/run_seurat.R \
             --counts {input.counts} \
             --resolution {params.resolution} \
             --outdir {params.outdir} \
+            --config {params.conf_path}
         """
 
 
@@ -138,25 +150,25 @@ rule decontx_round2:
     output:
         results = _results("decontx_round2/{sample}/counts_low_contamination_decontaminated.rds"),
         contamination  = _results("decontx_round2/{sample}/contamination_estimates.tsv")
-    conda:
-        "Renv"
     params:
         sample = lambda wildcards: wildcards.sample,
         outdir = lambda wildcards: _results(f"decontx_round2/{wildcards.sample}"),
         max_contamination = config["max_contamination"],
-        delta_first = 10,
-        delta_second = 30
+        delta_first = config["delta_first"],
+        delta_second = config["delta_second"],
+        conf_path = conf_path
     shell:
         "mkdir -p {params.outdir}; "
         """
-        {config[Rscript_binary]} workflow/scripts/run_decontx.R \
+        {config[Rscript_binary]} workflow/scripts/run_decontx_configurable.R \
             --counts_nuclei {input.counts_nuclei} \
             --counts_empty {input.counts_empty} \
             --clusters {input.clusters} \
             --max_contamination {params.max_contamination} \
             --delta_first {params.delta_first} \
             --delta_second {params.delta_second} \
-            --outdir {params.outdir}; 
+            --outdir {params.outdir} \
+            --config {params.conf_path};
         """
         "{config[python_binary]} workflow/scripts/modify_df.py"
             " --input {output.contamination}"
@@ -174,18 +186,20 @@ rule seurat_round3:
         directory(_results("seurat_round3/{sample}"))
     params:
         outdir = lambda wildcards: _results(f"seurat_round3/{wildcards.sample}"),
-        resolution = 0.8,
+        resolution = config["clustering"]["resolution"],
+        conf_path = conf_path
     shell:
         "mkdir -p {params.outdir}; "
         """
-        {config[Rscript_binary]} workflow/scripts/run_seurat.R.bak \
+        {config[Rscript_binary]} workflow/scripts/run_seurat.R \
             --counts {input.counts} \
             --resolution {params.resolution} \
             --outdir {params.outdir} \
+            --config {params.conf_path}
         """
 
 
-checkpoint dump_seurat_object:
+rule dump_seurat_object:
     input:
         rds = _results("seurat_round3/{sample}/seurat_obj.rds"),
         old = INPUT_FEATURES

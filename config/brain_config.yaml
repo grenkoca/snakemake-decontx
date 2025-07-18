@@ -1,0 +1,45 @@
+name: "brain_decontamination"
+Rscript_binary: "Rscript"
+python_binary: "python"
+
+input_dir_base: "data/{sample}/outs/"
+input_path_format: "data/{{sample}}/outs/raw_feature_bc_matrix/{data_file}"
+
+# Decontamination parameters
+max_contamination: 0.1
+delta_first: 10
+delta_second: 30
+
+# Clustering parameters
+clustering:
+  resolution: 0.5  # Brain tissue often benefits from lower resolution
+  pca_dims: 30     # More PCs for complex brain tissue
+  min_pca_dim: 1
+  max_pca_dim: 30
+
+# QC metrics - brain tissue specific
+qc_metrics:
+  - name: "mt"
+    pattern: "^MT-"
+    description: "Mitochondrial genes"
+  - name: "ribo"
+    pattern: "^RP[SL]"
+    description: "Ribosomal genes"
+  - name: "RBFOX3"
+    pattern: "^RBFOX3$"
+    description: "NeuN neuronal marker"
+  - name: "GFAP"
+    pattern: "^GFAP$"
+    description: "Astrocyte marker"
+
+# Marker genes configuration file
+marker_genes_config: "config/marker_genes.yaml"
+
+# Tissue type
+tissue_type: "brain"
+
+samples:
+  - samp1
+  - samp2
+  - samp3
+  - samp4

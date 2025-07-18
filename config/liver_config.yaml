@@ -1,0 +1,45 @@
+name: "liver_decontamination"
+Rscript_binary: "Rscript"
+python_binary: "python"
+
+input_dir_base: "data/{sample}/outs/"
+input_path_format: "data/{{sample}}/outs/raw_feature_bc_matrix/{data_file}"
+
+# Decontamination parameters
+max_contamination: 0.15  # Liver may have higher ambient contamination
+delta_first: 15
+delta_second: 35
+
+# Clustering parameters
+clustering:
+  resolution: 0.6
+  pca_dims: 25
+  min_pca_dim: 1
+  max_pca_dim: 25
+
+# QC metrics - liver tissue specific
+qc_metrics:
+  - name: "mt"
+    pattern: "^MT-"
+    description: "Mitochondrial genes"
+  - name: "ribo"
+    pattern: "^RP[SL]"
+    description: "Ribosomal genes"
+  - name: "ALB"
+    pattern: "^ALB$"
+    description: "Albumin hepatocyte marker"
+  - name: "CLEC4F"
+    pattern: "^CLEC4F$"
+    description: "Kupffer cell marker"
+
+# Marker genes configuration file
+marker_genes_config: "config/marker_genes.yaml"
+
+# Tissue type
+tissue_type: "liver"
+
+samples:
+  - samp1
+  - samp2
+  - samp3
+  - samp4

@@ -1,0 +1,82 @@
+# Marker genes configuration file for tissue-specific decontamination
+# This file defines known markers for different cell types and tissues
+
+# General markers that can be used across tissues
+known_markers:
+  - "ENSG00000081237"  # PTPRC (CD45 - immune cells)
+  - "ENSG00000110799"  # VWF (von Willebrand factor - endothelial cells)
+  # Add more general markers as needed
+
+# Cell type specific markers - organized by tissue type
+cell_type_markers:
+  
+  # Pancreatic islet markers (example tissue configuration)
+  pancreatic_islet:
+    beta_cells:
+      - "ENSG00000254647"  # INS (Insulin)
+    alpha_cells:
+      - "ENSG00000115263"  # GCG (Glucagon)
+    delta_cells:
+      - "ENSG00000157005"  # SST (Somatostatin)
+    gamma_cells:
+      - "ENSG00000108849"  # PPY (Pancreatic polypeptide)
+    ductal_cells:
+      - "ENSG00000171345"  # KRT19 (Keratin 19)
+    acinar_cells:
+      - "ENSG00000204983"  # PRSS1 (Trypsin 1)
+    stellate_cells:
+      - "ENSG00000232995"  # RGS5 (Regulator of G-protein signaling 5)
+    other_cells:
+      - "ENSG00000135094"  # SDS (Serine dehydratase)
+  
+  # Brain/Neural tissue markers (example)
+  brain:
+    neurons:
+      - "ENSG00000187714"  # RBFOX3 (NeuN)
+      - "ENSG00000104888"  # TUBB3 (Tubulin beta-3)
+    astrocytes:
+      - "ENSG00000131095"  # GFAP (Glial fibrillary acidic protein)
+    oligodendrocytes:
+      - "ENSG00000104131"  # MBP (Myelin basic protein)
+    microglia:
+      - "ENSG00000162736"  # AIF1 (Allograft inflammatory factor 1)
+  
+  # Liver tissue markers (example)
+  liver:
+    hepatocytes:
+      - "ENSG00000166741"  # ALB (Albumin)
+      - "ENSG00000146648"  # EGFR
+    kupffer_cells:
+      - "ENSG00000134013"  # CLEC4F
+    stellate_cells:
+      - "ENSG00000137673"  # MMP2
+  
+  # Kidney tissue markers (example)
+  kidney:
+    podocytes:
+      - "ENSG00000115414"  # NPHS1 (Nephrin)
+    tubular_cells:
+      - "ENSG00000169174"  # PCSK1
+    mesangial_cells:
+      - "ENSG00000188404"  # SELL
+  
+  # Lung tissue markers (example)
+  lung:
+    pneumocytes_type1:
+      - "ENSG00000049249"  # AGER (Advanced glycosylation end product-specific receptor)
+    pneumocytes_type2:
+      - "ENSG00000168484"  # SFTPC (Surfactant protein C)
+    alveolar_macrophages:
+      - "ENSG00000134013"  # CLEC4F
+
+# Default tissue type to use if not specified
+default_tissue: "general"
+
+# Configuration for general analysis (tissue-agnostic)
+general:
+  immune_cells:
+    - "ENSG00000081237"  # PTPRC (CD45)
+  endothelial_cells:
+    - "ENSG00000110799"  # VWF (von Willebrand factor)
+  fibroblasts:
+    - "ENSG00000168542"  # COL1A1 (Collagen type I alpha 1)
