@@ -6,6 +6,16 @@ Snakemake pipeline that corrects for ambient RNA expression in single-cell RNA s
 
 This project contains the code to run a two-phase tissue-agnostic decontamination protocol, as well as configurations and wrapper scripts to run the pipeline on sample data. The pipeline supports multiple tissue types through configurable marker genes and parameters (mainly for visualization).
 
+## Quick start
+```{bash}
+git clone https://github.com/grenkoca/snakemake-decontx.git
+cd snakemake-decontx
+conda env create --name sc_decontx -f environment.yaml # you may need to enter [Y]
+conda activate sc_decontx
+chmod +X ./run_pipeline.sh
+./run_pipeline.sh --configfile config/pancreatic_islet_config.yaml # will run demo data
+```
+
 ### Installation 
 Either install the provided conda environment (`./environment.yaml`) or use the docker image (using `./run_docker.sh`. Requires pulling `letaylor/sc_decontx`).
 
@@ -70,4 +80,13 @@ The pipeline calculates quality control metrics for genes matching specific patt
 - `ribo`: Ribosomal genes (pattern: `^RP[SL]`)
 - Tissue-specific genes (e.g., for pancreatic islets: `INS` for insulin, `GCG` for glucagon)
 
+### TODO:
+Fix broken plots
+- [ ] decontx: umap of pre/post marker expression are identical
+- [X] seurat: density plots for QC are empty
+- [X] seurat: combined feature umap only contains first 4 markers
+- [ ] seurat: pca is colored by single value, `scRNA_decontamination`    
+
+### Acknowledgements
+This pipeline originally came from a collaboration between the labs of Dr. Francis Collins and Dr. Mike Boehnke. Special thanks to Drs. Cassie Robertson, Leland Taylor, Henry Taylor, and all others involved (please message me if you are left off)
 
