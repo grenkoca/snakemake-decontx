@@ -70,4 +70,6 @@ The pipeline calculates quality control metrics for genes matching specific patt
 - `ribo`: Ribosomal genes (pattern: `^RP[SL]`)
 - Tissue-specific genes (e.g., for pancreatic islets: `INS` for insulin, `GCG` for glucagon)
 
+### Acknowledgements
+This pipeline originally came from a collaboration with the lab of Dr. Francis Collins and Dr. Mike Boehnke. Special thanks to Drs. Cassie Robertson, Leland Taylor, Henry Taylor, and all others involved (please message me if you are left off)
 
