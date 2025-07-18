@@ -83,8 +83,8 @@ The pipeline calculates quality control metrics for genes matching specific patt
 ### TODO:
 Fix broken plots
 - [ ] decontx: umap of pre/post marker expression are identical
-- [ ] seurat: density plots for QC are empty
-- [ ] seurat: combined feature umap only contains first 4 markers
+- [X] seurat: density plots for QC are empty
+- [X] seurat: combined feature umap only contains first 4 markers
 - [ ] seurat: pca is colored by single value, `scRNA_decontamination`    
 
 ### Acknowledgements
