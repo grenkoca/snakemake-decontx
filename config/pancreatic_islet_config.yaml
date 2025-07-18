@@ -21,15 +21,19 @@ clustering:
 qc_metrics:
   - name: "mt"
     pattern: "^MT-"
+    pattern_type: "HGNC"
     description: "Mitochondrial genes"
   - name: "ribo"
     pattern: "^RP[SL]"
+    pattern_type: "HGNC"
     description: "Ribosomal genes"
   - name: "INS"
-    pattern: "^INS$"
+    pattern: "^ENSG00000254647$"
+    pattern_type: "ENSGID"
     description: "Insulin gene"
   - name: "GCG"
-    pattern: "^GCG$"
+    pattern: "^ENSG00000115263$"
+    pattern_type: "ENSGID"
     description: "Glucagon gene"
 
 # Marker genes configuration file

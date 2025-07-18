@@ -21,15 +21,19 @@ clustering:
 qc_metrics:
   - name: "mt"
     pattern: "^MT-"
+    pattern_type: "HGNC"
     description: "Mitochondrial genes"
   - name: "ribo"
     pattern: "^RP[SL]"
+    pattern_type: "HGNC"
     description: "Ribosomal genes"
   - name: "ALB"
     pattern: "^ALB$"
+    pattern_type: "HGNC"
     description: "Albumin hepatocyte marker"
   - name: "CLEC4F"
     pattern: "^CLEC4F$"
+    pattern_type: "HGNC"
     description: "Kupffer cell marker"
 
 # Marker genes configuration file

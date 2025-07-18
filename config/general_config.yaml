@@ -21,12 +21,15 @@ clustering:
 qc_metrics:
   - name: "mt"
     pattern: "^MT-"
+    pattern_type: "HGNC"
     description: "Mitochondrial genes"
   - name: "ribo"
     pattern: "^RP[SL]"
+    pattern_type: "HGNC"
     description: "Ribosomal genes"
   - name: "PTPRC"
     pattern: "^PTPRC$"
+    pattern_type: "HGNC"
     description: "CD45 immune cell marker"
 
 # Marker genes configuration file

@@ -21,15 +21,19 @@ clustering:
 qc_metrics:
   - name: "mt"
     pattern: "^MT-"
+    pattern_type: "HGNC"
     description: "Mitochondrial genes"
   - name: "ribo"
     pattern: "^RP[SL]"
+    pattern_type: "HGNC"
     description: "Ribosomal genes"
   - name: "AGER"
     pattern: "^AGER$"
+    pattern_type: "HGNC"
     description: "Type I pneumocyte marker"
   - name: "SFTPC"
     pattern: "^SFTPC$"
+    pattern_type: "HGNC"
     description: "Type II pneumocyte marker"
 
 # Marker genes configuration file

@@ -41,7 +41,28 @@ rule all:
     input:
         expand(_results("cleaned/{sample}/outs/raw_feature_bc_matrix/barcodes.tsv.gz"), sample=samples),
         expand(_results("cleaned/{sample}/outs/raw_feature_bc_matrix/features.tsv.gz"), sample=samples),
-        expand(_results("cleaned/{sample}/outs/raw_feature_bc_matrix/matrix.mtx.gz"), sample=samples)
+        expand(_results("cleaned/{sample}/outs/raw_feature_bc_matrix/matrix.mtx.gz"), sample=samples),
+        _results("gene_mapping/gene_mapping.rds")
+
+
+# Build comprehensive gene mapping from all samples' features.tsv.gz files
+rule build_gene_mapping:
+    input:
+        features = expand(INPUT_FEATURES, sample=samples)
+    output:
+        mapping = _results("gene_mapping/gene_mapping.rds"),
+        report = _results("gene_mapping/gene_mapping_report.txt")
+    params:
+        input_dirs = lambda wildcards: ",".join([str(INPUT_FILTERED).format(sample=sample) for sample in samples]),
+        outdir = _results("gene_mapping")
+    shell:
+        "mkdir -p {params.outdir}; "
+        """
+        {config[Rscript_binary]} workflow/scripts/build_gene_mapping.R \
+            --input_dirs "{params.input_dirs}" \
+            --output {output.mapping} \
+            --report {output.report}
+        """
 
 
 # Figure out which droplets contain cells and which droplets contain nuclei
@@ -73,7 +94,8 @@ rule seurat_prelim:
     input:
         counts = _results("counts_protein_coding/{sample}/counts_nuclei.rds"),
         original_features = INPUT_FEATURES,
-        original_barcodes = INPUT_BARCODES
+        original_barcodes = INPUT_BARCODES,
+        gene_mapping = _results("gene_mapping/gene_mapping.rds")
     output:
         #_results("seurat_prelim/{sample}/seurat_obj.rds"),
         _results("seurat_prelim/{sample}/seurat_clusters.csv"),
@@ -88,7 +110,8 @@ rule seurat_prelim:
             --counts {input.counts} \
             --resolution {params.resolution} \
             --outdir {params.outdir} \
-            --config {params.conf_path}
+            --config {params.conf_path} \
+            --gene_mapping {input.gene_mapping}
         """
 
 
@@ -124,6 +147,7 @@ rule seurat_round2:
     input:
         counts = _results("decontx_prelim/{sample}/counts_low_contamination_raw.rds"),
         original_features = INPUT_FEATURES,
+        gene_mapping = _results("gene_mapping/gene_mapping.rds")
     output:
         #_results("seurat_round2/{sample}/seurat_obj.rds"),
         _results("seurat_round2/{sample}/seurat_clusters.csv"),
@@ -138,7 +162,8 @@ rule seurat_round2:
             --counts {input.counts} \
             --resolution {params.resolution} \
             --outdir {params.outdir} \
-            --config {params.conf_path}
+            --config {params.conf_path} \
+            --gene_mapping {input.gene_mapping}
         """
 
 
@@ -180,6 +205,7 @@ rule seurat_round3:
     input:
         counts = _results("decontx_round2/{sample}/counts_low_contamination_decontaminated.rds"),
         original_features = INPUT_FEATURES,
+        gene_mapping = _results("gene_mapping/gene_mapping.rds")
     output:
         _results("seurat_round3/{sample}/seurat_obj.rds"),
         _results("seurat_round3/{sample}/seurat_clusters.csv"),
@@ -195,7 +221,8 @@ rule seurat_round3:
             --counts {input.counts} \
             --resolution {params.resolution} \
             --outdir {params.outdir} \
-            --config {params.conf_path}
+            --config {params.conf_path} \
+            --gene_mapping {input.gene_mapping}
         """
 
 

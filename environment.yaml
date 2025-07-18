@@ -1,4 +1,4 @@
-name: /home/grenkoca/micromamba/envs/decontx
+name: sc_decontx
 channels:
   - conda-forge
   - R
@@ -497,4 +497,4 @@ dependencies:
   - zipp=3.23.0=pyhd8ed1ab_0
   - zstandard=0.23.0=py310ha75aee5_2
   - zstd=1.5.7=hb8e6e7a_2
-prefix: /home/grenkoca/micromamba/envs/decontx
+prefix: sc_decontx

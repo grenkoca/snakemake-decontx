@@ -28,6 +28,9 @@ option_list <- list(
   ),
   make_option(
     c("--config"), type = "character", help = "Path to main configuration file."
+  ),
+  make_option(
+    c("--gene_mapping"), type = "character", help = "Path to custom gene mapping RDS file."
   )
 )
 
@@ -54,8 +57,8 @@ if (!is.null(opts$config) && file.exists(opts$config)) {
 } else {
   # Fallback to default parameters if no config provided
   qc_metrics <- list(
-    list(name = "mt", pattern = "^MT-", description = "Mitochondrial genes"),
-    list(name = "ribo", pattern = "^RP[SL]", description = "Ribosomal genes")
+    list(name = "mt", pattern = "^MT-", pattern_type = "HGNC", description = "Mitochondrial genes"),
+    list(name = "ribo", pattern = "^RP[SL]", pattern_type = "HGNC", description = "Ribosomal genes")
   )
   clustering_params <- list(
     resolution = 0.8,
@@ -78,9 +81,46 @@ sobj
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # QC - Calculate configurable QC metrics
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Load custom gene mapping if provided
+if (!is.null(opts$gene_mapping) && file.exists(opts$gene_mapping)) {
+  cat("Loading custom gene mapping from:", opts$gene_mapping, "\n")
+  gene_mapping <- readRDS(opts$gene_mapping)
+  cat("Loaded", nrow(gene_mapping), "gene mappings\n")
+} else {
+  gene_mapping <- NULL
+  cat("No custom gene mapping provided, using direct pattern matching\n")
+}
+
 for (metric in qc_metrics) {
   metric_name <- paste0("percent.", metric$name)
-  sobj[[metric_name]] <- PercentageFeatureSet(sobj, pattern = metric$pattern)
+  
+  # Check if pattern type is specified and is HGNC
+  if (!is.null(metric$pattern_type) && metric$pattern_type == "HGNC") {
+    # Use custom gene mapping for HGNC pattern matching
+    if (!is.null(gene_mapping)) {
+      ensembl_genes <- rownames(sobj)
+      
+      # Filter gene mapping to only include genes in our dataset
+      available_mapping <- gene_mapping[gene_mapping$ensembl_id %in% ensembl_genes, ]
+      
+      # Find genes matching the pattern
+      matching_symbols <- grep(metric$pattern, available_mapping$gene_symbol, value = TRUE)
+      matching_ensembl <- available_mapping$ensembl_id[available_mapping$gene_symbol %in% matching_symbols]
+      
+      # Calculate percentage using ENSGID names
+      if (length(matching_ensembl) > 0) {
+        sobj[[metric_name]] <- PercentageFeatureSet(sobj, features = matching_ensembl)
+        cat("Found", length(matching_ensembl), "genes matching pattern", metric$pattern, "for metric", metric$name, "\n")
+      } else {
+        warning(paste("No genes found matching pattern", metric$pattern, "for metric", metric$name))
+        sobj[[metric_name]] <- 0
+      }
+    } 
+  } else {
+    # Use pattern directly (for ENSGID patterns or legacy configs)
+    sobj[[metric_name]] <- PercentageFeatureSet(sobj, pattern = metric$pattern)
+  }
 }
 
 # Output QC plots for each configured metric
@@ -209,14 +249,13 @@ if (exists("marker_config") && !is.null(marker_config)) {
     }
     
     # Create a combined feature plot for top markers
-    if (length(available_markers) >= 4) {
-      top_markers <- available_markers[1:4]
-      
-      png(file.path(opts$outdir, "seurat_feature_combined.png"), width=800, height=600)
-      p <- FeaturePlot(sobj, features = top_markers)
-      print(p)
-      dev.off()
-    }
+
+    width <- ceiling(sqrt(length(available_markers))) * 300 + 200
+    height <- floor(sqrt(length(available_markers))) * 300
+    png(file.path(opts$outdir, "seurat_feature_combined.png"), width=width, height=height)
+    p <- FeaturePlot(sobj, features = available_markers)
+    print(p)
+    dev.off()
   }
 }
 
